@@ -20,3 +20,13 @@ $ docker-compose up -d
 $ docker-compose ps
 $ docker logs traefik/fluentd/elasticsearch/kibana/curator
 ```
+## Versioning
+
+
+|                |Version                        |Comments                     |
+|----------------|-------------------------------|-----------------------------|
+|Kibana          |      **7.2.0**                |                             |
+|Logstash        |      **7.2.0**                |                             |
+|Elasticsearch   |      **7.2.0**                |                             |
+|Redis           |        **5**                  |                             |
+|Curator         |      **5.7.6**                | Necesaria esta versión para relk 7.2.0|
