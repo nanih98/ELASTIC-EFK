@@ -49,7 +49,7 @@ services:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
       ELASTIC_PASSWORD: "changeme"
       bootstrap.memory_lock: "true"
-      cluster.name: "ack-cluster"
+      cluster.name: "elastic-cluster"
       network.host: "0.0.0.0"
       discovery.type: "single-node"
       xpack.license.self_generated.type: "trial"
