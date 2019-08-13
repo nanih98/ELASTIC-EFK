@@ -34,10 +34,6 @@ services:
     network_mode: host
     expose:
       - 24224
-  # Elasticsearch requires your vm.max_map_count set to 262144
-  # Default will be 65530
-  # sysctl -w vm.max_map_count=262144
-  # Add this to /etc/sysctl.conf for making it permanent
   elasticsearch:
     image: nanih98/relk:elasticsearch-7.2.0
     container_name: elasticsearch
