@@ -15,7 +15,7 @@ services:
       - --api
       - --docker=true
       - --docker.watch=true
-      - --docker.domain={{ DOMAIN }}
+      - --docker.domain=kibana.example.com
       - --docker.exposedbydefault=false
       - --logLevel=INFO
       - --entryPoints=Name:http Address::80 Redirect.EntryPoint:https
@@ -38,9 +38,9 @@ services:
   # Default will be 65530
   # sysctl -w vm.max_map_count=262144
   # Add this to /etc/sysctl.conf for making it permanent
-  relk-elasticsearch:
+  elasticsearch:
     image: nanih98/relk:elasticsearch-7.2.0
-    container_name: relk-elasticsearch
+    container_name: elasticsearch
     restart: always 
     ulimits:
       memlock:
@@ -59,16 +59,15 @@ services:
       xpack.license.self_generated.type: "trial"
       xpack.security.enabled: "true"
       xpack.monitoring.collection.enabled: "true"
-  relk-kibana:
+  kibana:
     image: nanih98/relk:kibana-7.2.0
-    container_name: relk-kibana
-    restart: always
-    #hostname: "kidani.ackstorm.io"      
+    container_name: kibana
+    restart: always  
     network_mode: host
     labels:
       - traefik.enable=true
       - traefik.port=5601
-      - traefik.frontend.rule=Host:{{ DOMAIN }}
+      - traefik.frontend.rule=Host:kibana.example.com
       - traefik.backend=kibana
     environment:
       server.name: "kibana"
@@ -78,8 +77,8 @@ services:
       ELASTICSEARCH_PASSWORD: "changeme"
       xpack.monitoring.ui.container.elasticsearch.enabled: "true"
     depends_on:
-      - relk-elasticsearch
-  relk-curator:
+      - elasticsearch
+  curator:
     image: nanih98/relk:relk-curator-7.0
     container_name: relk-curator
     restart: always
@@ -94,4 +93,4 @@ services:
       - /srv/curator/conf/curator.yml:/usr/share/curator/config/curator.yml
       - /srv/curator/conf/delete_log_files_curator.yml:/usr/share/curator/config/delete_log_files_curator.yml
     depends_on:
-      - relk-elasticsearch
+      - elasticsearch
