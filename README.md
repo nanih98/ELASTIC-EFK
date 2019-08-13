@@ -29,4 +29,4 @@ $ docker logs traefik/fluentd/elasticsearch/kibana/curator
 |Logstash        |      **7.2.0**                |                             |
 |Elasticsearch   |      **7.2.0**                |                             |
 |Redis           |        **5**                  |                             |
-|Curator         |      **5.7.6**                | Necesaria esta versión para relk 7.2.0|
+|Curator         |      **5.7.6**                | Necessary for elastic version 7.2.0|
