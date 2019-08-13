@@ -18,7 +18,7 @@ $ docker-compose up -d
 
 ```diff
 $ docker-compose ps
-$ docker logs traefik/fluentd/elasticsearch/kibana/curator
+$ docker logs traefik/fluentd/elasticsearch/kibana/curator (one by one)
 ```
 ## Versioning
 
