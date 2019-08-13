@@ -1,0 +1,97 @@
+version: '2.2'
+services:
+  traefik:
+    container_name: traefik
+    image: traefik
+    restart: always
+    network_mode: host
+    expose:
+      - 80 
+      - 443 
+    volumes:
+      - /srv/traefik:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: 
+      - --api
+      - --docker=true
+      - --docker.watch=true
+      - --docker.domain={{ DOMAIN }}
+      - --docker.exposedbydefault=false
+      - --logLevel=INFO
+      - --entryPoints=Name:http Address::80 Redirect.EntryPoint:https
+      - --entryPoints=Name:https Address::443 TLS
+      - --defaultentrypoints=http,https
+      - --acme=true
+      - --acme.entrypoint=https
+      - --acme.tlsChallenge=true
+      - --acme.onhostrule=true
+      - --acme.storage=/etc/traefik/acme.json
+  fluentd:
+    build: ./fluentd
+    container_name: fluentd
+    volumes:
+      - ./fluentd/conf:/fluentd/etc
+    network_mode: host
+    expose:
+      - 24224
+  # Elasticsearch requires your vm.max_map_count set to 262144
+  # Default will be 65530
+  # sysctl -w vm.max_map_count=262144
+  # Add this to /etc/sysctl.conf for making it permanent
+  relk-elasticsearch:
+    image: nanih98/relk:elasticsearch-7.2.0
+    container_name: relk-elasticsearch
+    restart: always 
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /srv/elasticsearch/data:/usr/share/elasticsearch/data
+    network_mode: host
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: "changeme"
+      bootstrap.memory_lock: "true"
+      cluster.name: "ack-cluster"
+      network.host: "0.0.0.0"
+      discovery.type: "single-node"
+      xpack.license.self_generated.type: "trial"
+      xpack.security.enabled: "true"
+      xpack.monitoring.collection.enabled: "true"
+  relk-kibana:
+    image: nanih98/relk:kibana-7.2.0
+    container_name: relk-kibana
+    restart: always
+    #hostname: "kidani.ackstorm.io"      
+    network_mode: host
+    labels:
+      - traefik.enable=true
+      - traefik.port=5601
+      - traefik.frontend.rule=Host:{{ DOMAIN }}
+      - traefik.backend=kibana
+    environment:
+      server.name: "kibana"
+      server.host: "0"
+      ELASTICSEARCH_HOSTS: http://localhost:9200
+      ELASTICSEARCH_USERNAME: "elastic"
+      ELASTICSEARCH_PASSWORD: "changeme"
+      xpack.monitoring.ui.container.elasticsearch.enabled: "true"
+    depends_on:
+      - relk-elasticsearch
+  relk-curator:
+    image: nanih98/relk:relk-curator-7.0
+    container_name: relk-curator
+    restart: always
+    environment:
+      ELASTICSEARCH_HOST: localhost
+      CRON: 30 * * * *
+      CONFIG_FILE: /usr/share/curator/config/curator.yml
+      COMMAND: /usr/share/curator/config/delete_log_files_curator.yml
+      UNIT_COUNT: "2"
+    network_mode: host
+    volumes:
+      - /srv/curator/conf/curator.yml:/usr/share/curator/config/curator.yml
+      - /srv/curator/conf/delete_log_files_curator.yml:/usr/share/curator/config/delete_log_files_curator.yml
+    depends_on:
+      - relk-elasticsearch
