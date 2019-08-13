@@ -35,7 +35,7 @@ Kibana label (traefik host rule):
 ```diff
 $ docker restart traefik 
 ```
-> **Note:**  If you dont want to use traefik by the moment, allow port 5601 (kibana default port) and acces them using your public/internal ip. **Example**: 35.17.104.63:5601 in your browser. (Remember to allow the port 80-443 with traefik and 5601 with kibana). Important if you are using GCP or AWS. 
+> **Note:**  If you dont want to use traefik by the moment, allow port 5601 (kibana default port) and acces them using your public/internal ip. **Example**: 35.17.104.63:5601 in your browser. (Remember to allow the port 80-443 if you youse traefik, and 5601 if you dont want to use it and you want acces directly). **Important if you are using GCP or AWS.**
 
 ## Versioning
 
