@@ -28,5 +28,5 @@ $ docker logs traefik/fluentd/elasticsearch/kibana/curator (one by one)
 |Kibana          |      **7.2.0**                |                             |
 |Logstash        |      **7.2.0**                |                             |
 |Elasticsearch   |      **7.2.0**                |                             |
-|Redis           |        **5**                  |                             |
+|Fluentd         |      **latest**               |                             |
 |Curator         |      **5.7.6**                | Necessary for elastic version 7.2.0|
