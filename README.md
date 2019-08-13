@@ -20,6 +20,13 @@ $ docker-compose up -d
 $ docker-compose ps
 $ docker logs traefik/fluentd/elasticsearch/kibana/curator (one by one)
 ```
+## Change the domain name if you want to use traefik
+
+Traefik command:
+**- --docker.domain=kibana.example.com**
+Kibana label (traefik host rule):
+**- traefik.frontend.rule=Host:kibana.example.com**
+
 ## Versioning
 
 
